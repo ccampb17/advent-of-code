@@ -48,6 +48,29 @@ class All_monke:
 
         return res
 
+    def solve(self):
+        i = 0
+        while self.find_monke('root').value is None:
+            this_monke = self.all[i]
+
+            print(f'Checking {this_monke.name}...')
+
+            if this_monke.value is None:
+                mon_1 = self.find_monke(this_monke.ptr_1)
+                mon_2 = self.find_monke(this_monke.ptr_2)
+                if mon_1.value is not None and mon_2.value is not None:
+                    expr = f'{mon_1.value}{this_monke.op}{mon_2.value}'
+                    this_monke.value = eval(expr)
+                    print(f'found value!')
+
+            i = i + 1
+            if i >= len(self.all):
+                i = 0
+                print('GOING THROUGH AGAIN')
+
+        print('the answer is: ')
+        print(self.find_monke('root').value)
+
 
 def parse_puzz_input(puzz_input_raw):
     all_monke = []
@@ -74,8 +97,8 @@ def parse_puzz_input(puzz_input_raw):
     return all_monke
 
 
-puzz_input_raw = read_file_as_list('21_ex.txt')
-all_monke = All_monke(parse_puzz_input(puzz_input_raw))
 
-all_monke.find_monke('pppw')
+puzz_input_raw = read_file_as_list('21_input.txt')
+all_monke = All_monke(parse_puzz_input(puzz_input_raw))
+all_monke.solve()
 
