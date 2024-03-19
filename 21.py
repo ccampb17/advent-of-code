@@ -55,6 +55,12 @@ class All_monke:
 
             print(f'Checking {this_monke.name}...')
 
+            # ODO
+            # make this recursive?
+            # find_v(mon):
+            #   while mon.v is None:
+            #   ...
+
             if this_monke.value is None:
                 mon_1 = self.find_monke(this_monke.ptr_1)
                 mon_2 = self.find_monke(this_monke.ptr_2)
