@@ -46,27 +46,61 @@ def parse_puzz_input(puzz_input_raw):
             _corr_type = x
 
         if re.match(string=x, pattern='\d+'):
-            _type_correspondences.append(x)
+            as_list_of_ints = [int(y) for y in x.split(' ')]
+            _type_correspondences.append(as_list_of_ints)
         else:
             print(f'finished type {_corr_type}')
             correspondence_dict[_corr_type] = _type_correspondences
             type_correspondences = []
 
 
-    return correspondence_dict
+    return correspondence_dict, seed_info
 
 
 puzz_input_raw = read_file_as_list('ex_1.txt')
 
-correspondence_dict = parse_puzz_input(puzz_input_raw)
+correspondence_dict, seed_info = parse_puzz_input(puzz_input_raw)
 
 
 random_key = random.choice(list(correspondence_dict.keys()))
 correspondence_type = random_key
 
+# dbg
+type_from = 'seed'
+type_to = 'soil'
+value = seed_info[0]
 
-def create_correspondence_indices(correspondence_type, correspondence_dict):
-    sou
+# this relies heavily on indices and that's BAD CODE.
+
+def check_correspondence_indices(value, type_from, type_to, correspondence_dict):
+
+    # get the right correspondence
+    regex = re.compile(f'^{type_from}-to-{type_to}')
+
+    for key in correspondence_dict.keys():
+        if regex.match(key):
+            print(key)
+            correspondence_type = correspondence_dict[key]
+
+    # unusual_index = True
+    for idx in correspondence_type:
+        # for readability
+        type_from_value_start = correspondence_type[0]
+        type_from_value_end = correspondence_type[0] + correspondence_type[2]
+
+        if value >= type_from_value_start and value <= type_from_value_end:
+
+            type_from_type_to_difference = correspondence_type[1] - correspondence_type[0]
+
+            print('found')
+            corresponding_value = correspondence_type[1] + type_from_type_to_difference
+            return corresponding_value
+
+    print('no conversion required')
+    return value
+
+
+
 
 
 
