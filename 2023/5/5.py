@@ -1,8 +1,10 @@
 import os
 import re
 
-os.chdir('2023/5')
+import random # for testing
 
+if not re.findall(string=os.getcwd(), pattern=r'2023[/\\\\]5'):
+    os.chdir('2023/5')
 
 def read_file_as_list(file_path):
     try:
@@ -14,7 +16,6 @@ def read_file_as_list(file_path):
         print(f"File '{file_path}' not found.")
         return []
 
-puzz_input_raw = read_file_as_list('ex_1.txt')
 
 def parse_puzz_input(puzz_input_raw):
 
@@ -48,13 +49,24 @@ def parse_puzz_input(puzz_input_raw):
             _type_correspondences.append(x)
         else:
             print(f'finished type {_corr_type}')
-            correspondence_dict[_corr_type] = type_correspondences
+            correspondence_dict[_corr_type] = _type_correspondences
             type_correspondences = []
 
 
     return correspondence_dict
 
 
+puzz_input_raw = read_file_as_list('ex_1.txt')
+
+correspondence_dict = parse_puzz_input(puzz_input_raw)
+
+
+random_key = random.choice(list(correspondence_dict.keys()))
+correspondence_type = random_key
+
+
+def create_correspondence_indices(correspondence_type, correspondence_dict):
+    sou
 
 
 
