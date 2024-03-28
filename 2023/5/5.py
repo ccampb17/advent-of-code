@@ -39,6 +39,7 @@ def parse_puzz_input(puzz_input_raw):
     # instantiate hidden var for loop
     _type_correspondences = []
 
+    x = puzz_input_no_seed_info[2]
     # dynamically construct corr dict
     for i, x in enumerate(puzz_input_no_seed_info):
         print(x)
@@ -48,10 +49,10 @@ def parse_puzz_input(puzz_input_raw):
         if re.match(string=x, pattern='\d+'):
             as_list_of_ints = [int(y) for y in x.split(' ')]
             _type_correspondences.append(as_list_of_ints)
-        else:
+        elif len(x) == 0:
             print(f'finished type {_corr_type}')
             correspondence_dict[_corr_type] = _type_correspondences
-            type_correspondences = []
+            _type_correspondences = []
 
 
     return correspondence_dict, seed_info
@@ -64,11 +65,12 @@ correspondence_dict, seed_info = parse_puzz_input(puzz_input_raw)
 
 random_key = random.choice(list(correspondence_dict.keys()))
 correspondence_type = random_key
+correspondence_type = list(correspondence_dict.keys())[0]
 
 # dbg
 type_from = 'seed'
 type_to = 'soil'
-value = seed_info[0]
+value = int(seed_info[0])
 
 # this relies heavily on indices and that's BAD CODE.
 
@@ -84,18 +86,25 @@ def check_correspondence_indices(value, type_from, type_to, correspondence_dict)
 
     # unusual_index = True
     for idx in correspondence_type:
+        idx = correspondence_type[0] # dbg
+
         # for readability
-        type_from_value_start = correspondence_type[0]
-        type_from_value_end = correspondence_type[0] + correspondence_type[2]
+        type_from_value_start = idx[1]
+        type_from_value_end = idx[1] + (idx[2]-1)
+
+        type_to_value_start = idx[0]
+        type_to_value_end = idx[2] + (idx[2]-1)
 
         if value >= type_from_value_start and value <= type_from_value_end:
 
-            type_from_type_to_difference = correspondence_type[1] - correspondence_type[0]
+            # convert the from value to the to value...
+            type_from_type_to_difference = idx[0] - idx[1]
 
             print('found')
-            corresponding_value = correspondence_type[1] + type_from_type_to_difference
+            corresponding_value = value + type_from_type_to_difference
             return corresponding_value
 
+    # or do no conversion (1-1 conversion as per the documentation)
     print('no conversion required')
     return value
 
