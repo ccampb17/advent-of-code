@@ -21,11 +21,15 @@ def parse_puzz_input(puzz_input_raw):
 
     # assumes it will be on line 0
     seed_info = re.findall(string=puzz_input_raw[0], pattern=r'\d+')
+    seed_info = [int(x) for x in seed_info]
 
     puzz_input_no_seed_info = puzz_input_raw.copy()
 
     # this should be dynamic
     puzz_input_no_seed_info = puzz_input_no_seed_info[2:]
+
+    # !JANK ALERT! so the loop knows which is the final entry
+    puzz_input_no_seed_info.append('')
 
     # get the types dynamically
     correspondence_types_raw = [re.findall(string=x, pattern=r'\w+-to.+') for x in puzz_input_no_seed_info]
@@ -58,23 +62,15 @@ def parse_puzz_input(puzz_input_raw):
     return correspondence_dict, seed_info
 
 
-puzz_input_raw = read_file_as_list('ex_1.txt')
 
-correspondence_dict, seed_info = parse_puzz_input(puzz_input_raw)
-
-
-random_key = random.choice(list(correspondence_dict.keys()))
-correspondence_type = random_key
-correspondence_type = list(correspondence_dict.keys())[0]
-
-# dbg
-type_from = 'seed'
-type_to = 'soil'
-value = int(seed_info[0])
-
+type_from = 'light'
+type_to = 'temperature'
+value = 74
 # this relies heavily on indices and that's BAD CODE.
 
-def check_correspondence_indices(value, type_from, type_to, correspondence_dict):
+def do_single_type_conversion(value, type_from, type_to, correspondence_dict):
+
+    print(f'now converting: {value}')
 
     # get the right correspondence
     regex = re.compile(f'^{type_from}-to-{type_to}')
@@ -84,9 +80,8 @@ def check_correspondence_indices(value, type_from, type_to, correspondence_dict)
             print(key)
             correspondence_type = correspondence_dict[key]
 
-    # unusual_index = True
+
     for idx in correspondence_type:
-        idx = correspondence_type[0] # dbg
 
         # for readability
         type_from_value_start = idx[1]
@@ -104,14 +99,40 @@ def check_correspondence_indices(value, type_from, type_to, correspondence_dict)
             corresponding_value = value + type_from_type_to_difference
             return corresponding_value
 
+
     # or do no conversion (1-1 conversion as per the documentation)
     print('no conversion required')
     return value
 
+def do_full_conversion(seed_value, correspondence_dict):
+
+    all_types_ordered = ['seed', 'soil', 'fertilizer', 'water', 'light', 'temperature', 'humidity', 'location']
+    i=0
+
+    result = seed_value
+    for i, x in enumerate(all_types_ordered):
+        print(i)
+        if i < len(all_types_ordered)-1:
+            result = do_single_type_conversion(value = result,
+                                               type_from=all_types_ordered[i],
+                                               type_to=all_types_ordered[i+1],
+                                               correspondence_dict=correspondence_dict)
 
 
+    return result
 
+def solve_puzzle_1(input_path):
 
+    puzz_input_raw = read_file_as_list(input_path)
 
+    correspondence_dict, seed_info = parse_puzz_input(puzz_input_raw)
 
+    all_results = []
+    for value in seed_info:
+        res = do_full_conversion(value, correspondence_dict)
+        all_results.append(res)
 
+    return min(all_results)
+
+solve_puzzle_1('inp_1.txt')
+# > 226172555
